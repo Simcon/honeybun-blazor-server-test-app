@@ -1,0 +1,33 @@
+﻿@page "/"
+@inject Branding branding
+
+<PageTitle>Index</PageTitle>
+
+<h1>@branding.AppName</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+<AuthorizeView>
+    <Authorized>
+        <h1>Hello, @context.User.Identity?.Name !</h1>
+
+        <p>Welcome to your new app.</p>
+
+        @foreach(var claim in context.User.Claims)
+        {
+            <p>
+                @claim.Type | @claim.Value
+            </p>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <p>Not Authorized</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code{
+    [Parameter] public AuthenticationState State { get; set; } = null!;
+
+}
