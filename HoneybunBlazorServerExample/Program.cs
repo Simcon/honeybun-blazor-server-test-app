@@ -35,6 +35,7 @@ builder.Services
     .AddCookie()
     .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, opt =>
     {
+        opt.RequireHttpsMetadata = false;
         opt.Authority = settings.Authority;
         opt.ClientId = settings.ClientId;
         opt.ClientSecret = settings.ClientSecret;
