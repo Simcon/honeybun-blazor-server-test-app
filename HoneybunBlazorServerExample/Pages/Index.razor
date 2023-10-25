@@ -1,11 +1,15 @@
 ﻿@page "/"
+@using Microsoft.IdentityModel.Tokens
 @inject Branding branding
+@inject HoneybunSettings honeybunSettings
 
 <PageTitle>Index</PageTitle>
 
 <h1>@branding.AppName</h1>
 
-Welcome to your new app.
+<p>Authority: @honeybunSettings.Authority</p>
+<p>Client Id: @honeybunSettings.ClientId</p>
+<p>Client Secret: @(honeybunSettings.ClientSecret.IsNullOrEmpty() ? "NOT FOUND" : "FOUND")</p>
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 

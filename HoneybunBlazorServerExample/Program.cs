@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,11 +20,20 @@ var config = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .Build();
 
+IdentityModelEventSource.ShowPII = true; // dev only
+
 var settings = new HoneybunSettings();
 config.GetSection("Honeybun").Bind(settings);
 var branding = new Branding();
 config.GetSection("Branding").Bind(branding);
+
+builder.Services.AddSingleton(settings);
 builder.Services.AddSingleton(branding);
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.Secure = CookieSecurePolicy.Always;
+});
 
 builder.Services
     .AddAuthentication(opt =>
@@ -44,7 +54,11 @@ builder.Services
         opt.TokenValidationParameters = new TokenValidationParameters
         {
             NameClaimType = ClaimTypes.Email,
-            ValidateIssuer = false
+            ValidateIssuer = false,
+            ValidIssuers = new[]
+            {
+                settings.Authority
+            }          
         };
         opt.Events = new OpenIdConnectEvents
         {
@@ -77,6 +91,8 @@ app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCookiePolicy();
 
 // *** END INTEGRATING HONEYBUN AUTH
 
