@@ -64,7 +64,7 @@ builder.Services
         {
             OnRedirectToIdentityProvider = context =>
             {
-                context.ProtocolMessage.RedirectUri = "https://pluto-test-app-1.onrender.com/signin-oidc";
+                context.ProtocolMessage.RedirectUri = settings.RedirectUri;
                 return Task.CompletedTask;
             },
             OnAccessDenied = context =>
