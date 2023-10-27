@@ -1,10 +1,10 @@
 using HoneybunBlazorServerExample.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,10 +58,15 @@ builder.Services
             ValidIssuers = new[]
             {
                 settings.Authority
-            }          
+            }
         };
         opt.Events = new OpenIdConnectEvents
         {
+            OnRedirectToIdentityProvider = context =>
+            {
+                context.ProtocolMessage.RedirectUri = "https://pluto-test-app-1.onrender.com/signin-oidc";
+                return Task.CompletedTask;
+            },
             OnAccessDenied = context =>
             {
                 context.HandleResponse();
